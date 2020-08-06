@@ -14,6 +14,40 @@
             <input v-model="search" type="search" class="input" placeholder="search...">
           </div>
         </div>
+        <div class="field">
+          <div class="buttons">
+            <button @click="onPage(page - 1)" class="button" :disabled="page == 1">Prev</button>
+            <button @click="onPage(page + 1)" class="button" :disabled="!(data.length > 0 && (total - (10 * page ) > 0))">Next</button>
+          </div>
+          <p>Total: {{ total }}</p>
+          <p>Page: {{ page }}</p>
+        </div>
+      </div>
+      <br>
+      <div class="container">
+        <template v-if="data.length > 0">
+          <table class="table is-fullwidth">
+            <thead>
+              <tr>
+                <th>Start</th>
+                <th>End</th>
+                <th>Text</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+              <tbody>
+                <tr v-for="(item, index) in data" v-bind:key="index">
+                  <td>{{ item.start }}</td>
+                  <td>{{ item.end }}</td>
+                  <td v-html="item.text"></td>
+                  <td><a :href="`${url}&t=${item.start}s`" target="_blank">Youtube</a></td>
+                </tr>
+            </tbody>
+          </table>
+        </template>
+        <template v-else>
+            <h1 style="text-align:center;font-size:2rem;">Data Empty</h1>
+        </template>
       </div>
     </section>
   </div>
@@ -29,8 +63,10 @@ export default {
   data() {
     return {
       url: 'https://www.youtube.com/watch?v=klnvttPfOUM',
-      search: '',
-      data: []
+      data: [],
+      search: 'like this',
+      page: 1,
+      total: 0
     }
   },
 
@@ -40,16 +76,23 @@ export default {
         params: {
           q: this.search,
           url: this.url,
+          page: this.page
         }
       }).then(({ data }) => {
-        console.log(data)
+        this.data = data.data
+        this.total = data.total
+        this.page = data.page
       })
+    },
+    onPage(page) {
+      this.page = page
+      this.fetchData()
     }
   },
 
   watch: {
     search: _.debounce( function() {
-      this.fetchData();
+      this.fetchData()
     }, 500)
   }
 
