@@ -64,7 +64,7 @@ export default {
     return {
       url: 'https://www.youtube.com/watch?v=klnvttPfOUM',
       data: [],
-      search: 'like this',
+      search: '',
       page: 1,
       total: 0
     }
