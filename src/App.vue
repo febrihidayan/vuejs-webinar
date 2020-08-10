@@ -55,7 +55,7 @@
 
 <script>
 import axios from 'axios'
-import _ from 'lodash'
+import { debounce } from 'lodash'
 
 export default {
   name: 'App',
@@ -91,7 +91,7 @@ export default {
   },
 
   watch: {
-    search: _.debounce( function() {
+    search: debounce( function() {
       this.fetchData()
     }, 500)
   }
